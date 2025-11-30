@@ -40,35 +40,8 @@ class AppServiceProvider extends ServiceProvider
     }
 
     public function boot(): void
-    {
-        View::composer('layouts.app', function ($view) {
-            $userId = 3; 
-            $user = User::find($userId);
-
-            if ($user) {
-                $notificationService = app(NotificationService::class);
-                
-               
-                $notifications = $notificationService->getRecentNotificationsForUser($user);
-                $unreadNotificationsCount = $notificationService->getUnreadCountForUser($user);
-                
-                $view->with([
-                    'notifications' => $notifications,
-                    'unreadNotificationsCount' => $unreadNotificationsCount,
-                    'role' => $user->role,
-                    'userId' => $user->id, 
-                    'userSpecialty' => $user->specialty 
-                ]);
-            } else {
-                
-                $view->with([
-                    'notifications' => collect(),
-                    'unreadNotificationsCount' => 0,
-                    'role' => 'patient', 
-                    'userId' => $userId,
-                    'userSpecialty' => null
-                ]);
-            }
-        });
-    }
+    {View::composer('layouts.app', function ($view) {
+        $view->with('unreadNotifications', 0);
+        $view->with('user', null);
+    });
 }
