@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\AdminMessage;
+
+class AdminMessageService
+{
+    public function createMessage(int $userId, string $subject, string $message, string $priority = 'medium')
+    {
+        return AdminMessage::create([
+            'user_id' => $userId,
+            'subject' => $subject,
+            'message' => $message,
+            'status' => 'open',
+            'priority' => $priority,
+        ]);
+    }
+
+    public function getMessagesByUser(int $userId)
+    {
+        return AdminMessage::where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    public function getAllMessages()
+    {
+        return AdminMessage::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
+    public function respondToMessage(int $messageId, string $response)
+    {
+        $message = AdminMessage::findOrFail($messageId);
+        $message->admin_response = $response;
+        $message->save();
+
+        return $message;
+    }
+
+    public function resolveMessage(int $messageId)
+    {
+        $message = AdminMessage::findOrFail($messageId);
+        $message->status = 'resolved';
+        $message->resolved_at = now();
+        $message->save();
+
+        return $message;
+    }
+}
