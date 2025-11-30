@@ -44,4 +44,4 @@ class AppServiceProvider extends ServiceProvider
         $view->with('unreadNotifications', 0);
         $view->with('user', null);
     });
-}
+    }}
